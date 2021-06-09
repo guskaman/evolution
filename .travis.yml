@@ -11,7 +11,7 @@ branches:
 
 env:
   - tf_version=0.12.19 tf_init_cli_options="-input=false" tf_validation_cli_options="" tf_plan_cli_options="-lock=false -input=false" tf_apply_cli_options="-auto-approve -input=false"
-  
+ 
 # env:
 #   # This environment variable tells Terraform not to prompt for input. This is
 #   # not required, but if we make a mistake, the Travis builder will hang waiting
@@ -34,6 +34,13 @@ env:
 #   script: terraform apply ./terraform
 #   on:
 #     branch: main
+
+before_install:
+  - wget https://releases.hashicorp.com/terraform/"$tf_version"/terraform_"$tf_version"_linux_amd64.zip
+  - unzip terraform_"$tf_version"_linux_amd64.zip
+  - sudo mv terraform /usr/local/bin/
+  - rm terraform_"$tf_version"_linux_amd64.zip
+
 
 # Terraform Plan and Apply
 # Plan only on pull requests, Apply on merged code
