@@ -1,29 +1,56 @@
-dist: trusty
-sudo: false
+# Define environment
+dist: xenial # Ubuntu 16.04
+language: bash
+
+# dist: trusty
+# sudo: false
 
 branches:
   only:
     - main
 
 env:
-  # This environment variable tells Terraform not to prompt for input. This is
-  # not required, but if we make a mistake, the Travis builder will hang waiting
-  # for user input, tieing up unnecessary resources.
-  - TF_INPUT=false
+  - tf_version=0.12.19 tf_init_cli_options="-input=false" tf_validation_cli_options="" tf_plan_cli_options="-lock=false -input=false" tf_apply_cli_options="-auto-approve -input=false"
+  
+# env:
+#   # This environment variable tells Terraform not to prompt for input. This is
+#   # not required, but if we make a mistake, the Travis builder will hang waiting
+#   # for user input, tieing up unnecessary resources.
+#   - TF_INPUT=false
 
-# Install terraform
-before_install:
-  - curl -sLo /tmp/terraform.zip https://releases.hashicorp.com/terraform/0.8.8/terraform_0.8.8_linux_amd64.zip
-  - unzip /tmp/terraform.zip -d /tmp
-#  - mkdir ~/bin
-  - mv /tmp/terraform ~/bin
-  - export PATH="~/bin:$PATH"
+# # Install terraform
+# before_install:
+#   - curl -sLo /tmp/terraform.zip https://releases.hashicorp.com/terraform/0.8.8/terraform_0.8.8_linux_amd64.zip
+#   - unzip /tmp/terraform.zip -d /tmp
+# #  - mkdir ~/bin
+#   - mv /tmp/terraform ~/bin
+#   - export PATH="~/bin:$PATH"
 
-script: terraform plan ./terraform
+# script: terraform plan ./terraform
 
-deploy:
-- provider: script
-  skip_cleanup: true
-  script: terraform apply ./terraform
-  on:
-    branch: main
+# deploy:
+# - provider: script
+#   skip_cleanup: true
+#   script: terraform apply ./terraform
+#   on:
+#     branch: main
+
+# Terraform Plan and Apply
+# Plan only on pull requests, Apply on merged code
+jobs:
+  include:
+    - stage: terraform plan
+      # Only run terraform validate and plan state if within a pull request
+      if: type IN (pull_request)
+      script:
+        - echo "Executing Terraform Plan on pull request code"
+        - terraform init $tf_init_cli_options
+        - terraform validate $tf_validation_cli_options
+        - terraform plan $tf_plan_cli_options
+    - stage: terraform apply
+      # Only run terraform apply stage if outside of a pull request
+      if: type IN (push) and branch = main
+      script:
+        - echo "Executing Terraform Apply on merged code"
+        - terraform init $tf_init_cli_options
+        - terraform apply $tf_apply_cli_options
