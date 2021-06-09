@@ -1,9 +1,8 @@
-# Test VPC
+resource "aws_vpc" "main" {
+  cidr_block       = "10.0.0.0/16"
+  instance_tenancy = "default"
 
-resource "aws vpc" "aws vpc" {
-    cird_block = "10.51.0.0/16"
-
-    tags = {
-        Name = "EVO VPC"
-    }
+  tags = {
+    Name = "EVO VPC"
+  }
 }
