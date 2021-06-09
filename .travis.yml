@@ -26,4 +26,4 @@ deploy:
   skip_cleanup: true
   script: terraform apply ./terraform
   on:
-    branch: master
+    branch: main
