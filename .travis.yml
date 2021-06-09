@@ -3,7 +3,7 @@ sudo: false
 
 branches:
   only:
-    - master
+    - main
 
 env:
   # This environment variable tells Terraform not to prompt for input. This is
