@@ -24,7 +24,7 @@ resource "aws_vpc" "main" {
 }
 
 resource "aws_subnet" "main" {
-  vpc_id     = aws_vpc.main.vpc_id
+  vpc_id     = aws_vpc.main.id
   cidr_block = "192.168.88.0/26"
 
   tags = {
