@@ -36,7 +36,7 @@ resource "aws_vpc" "allow_all" {
   cidr_block = "10.1.0.0/16"
 }
 
-resource "aws_default_security_group" "default" {
+resource "aws_security_group" "allow_all" {
   vpc_id = aws_vpc.main.id
 
   ingress {
